@@ -849,6 +849,15 @@ button.option:active:not(:disabled) {
   background: rgba(255, 213, 74, 0.12);
   box-shadow: 0 0 26px rgba(245, 179, 1, 0.4);
 }
+/* En el sorteo: quien ya ha salido no puede repetir (atenuado). */
+.rebound-card.is-used {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+}
+.rebound-card.is-used:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.14);
+}
 .rebound-name {
   font-family: var(--font-display);
   font-weight: 600;

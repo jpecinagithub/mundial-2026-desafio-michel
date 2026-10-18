@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { PARTICIPANTS, getProtagonist, getReboundCandidates } from "../data/participants";
 import { useCountdown } from "../hooks/useCountdown";
 import { sfxCorrect, sfxRebound, sfxTimeout, sfxWrong, useAudioEngine } from "../hooks/useAudio";
@@ -7,7 +7,7 @@ import { AnswerOptions } from "../components/AnswerOptions";
 import { CountdownTimer } from "../components/CountdownTimer";
 import { Footer } from "../components/Footer";
 import { ParticipantPhoto } from "../components/ParticipantPhoto";
-import { ReboundSelection } from "../components/ReboundSelection";
+import { ReboundDraw } from "../components/ReboundDraw";
 import { ReboundSuspense } from "../components/ReboundSuspense";
 import { ReboundVideo } from "../components/ReboundVideo";
 import { RevealCard } from "../components/RevealCard";
@@ -20,20 +20,6 @@ type AudioEngine = ReturnType<typeof useAudioEngine>;
 interface Props {
   game: GameApi;
   audio: AudioEngine;
-}
-
-function ReboundSelectWrap({ game }: { game: GameApi }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  return (
-    <ReboundSelection
-      candidates={getReboundCandidates()}
-      selectedId={selectedId}
-      onSelect={setSelectedId}
-      onConfirm={() => {
-        if (selectedId) game.selectRebounder(selectedId);
-      }}
-    />
-  );
 }
 
 export function GameScreen({ game, audio }: Props) {
@@ -166,7 +152,12 @@ export function GameScreen({ game, audio }: Props) {
         )}
 
         {phase === "reboundSelect" && (
-          <ReboundSelectWrap key={state.questionIndex} game={game} />
+          <ReboundDraw
+            key={state.questionIndex}
+            candidates={getReboundCandidates()}
+            usedIds={state.usedRebounders}
+            onDraw={game.drawRebounder}
+          />
         )}
 
         {phase === "reboundSuspense" && (

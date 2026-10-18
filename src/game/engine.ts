@@ -65,6 +65,7 @@ export function createInitialState(participantIds: string[]): GameState {
     michelCorrect: 0,
     reboundsOffered: 0,
     reboundsWon: 0,
+    usedRebounders: [],
     deadline: null,
     timerSeconds: MICHEL_SECONDS,
     startedAt: null,
@@ -124,18 +125,36 @@ export function expireMichelTimer(state: GameState): GameState {
 }
 
 /**
- * El organizador elige MANUALMENTE al participante del rebote.
- * Pasa a la fase de suspense (animación de 5 s); el cronómetro de 30 s
- * no arranca hasta que aparece la pregunta del rebote.
+ * SORTEO del participante del rebote: elección uniforme entre los
+ * candidatos (todos menos Michel), SIN reemplazo dentro de la partida:
+ * quien ya ha salido no repite hasta agotar el bombo. Si el bombo se
+ * agota (posible con 10 preguntas y 6 candidatos), se reinicia para un
+ * nuevo ciclo. Pasa a la fase de suspense (animación de 5 s); el
+ * cronómetro de 30 s no arranca hasta que aparece la pregunta del rebote.
+ *
+ * `rng` es inyectable para poder testear el sorteo (por defecto Math.random).
  */
-export function selectRebounder(state: GameState, participantId: string): GameState {
+export function drawRebounder(
+  state: GameState,
+  rng: () => number = Math.random,
+): GameState {
   if (state.phase !== "reboundSelect") return state;
-  if (participantId === MICHEL_ID) return state;
-  if (!state.scores[participantId]) return state;
+  const all = Object.keys(state.scores).filter((id) => id !== MICHEL_ID);
+  if (all.length === 0) return state;
+  let pool = all.filter((id) => !state.usedRebounders.includes(id));
+  let used = state.usedRebounders;
+  if (pool.length === 0) {
+    // Bombo agotado: se reinicia para empezar un ciclo nuevo.
+    pool = all;
+    used = [];
+  }
+  const idx = Math.min(Math.floor(rng() * pool.length), pool.length - 1);
+  const picked = pool[idx];
   return {
     ...state,
     phase: "reboundSuspense",
-    activeParticipantId: participantId,
+    activeParticipantId: picked,
+    usedRebounders: [...used, picked],
     selectedOption: null,
     wasCorrect: null,
     reboundStolen: false,

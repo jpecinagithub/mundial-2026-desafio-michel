@@ -55,8 +55,10 @@ export interface Question {
  * Máquina de estados del concurso:
  * welcome → michel → (reveal | reboundSelect → reboundSuspense
  *   → [reboundVideo] → reboundQuestion → reveal) → … → final
- * La fase de vídeo solo se atraviesa si el participante tiene
- * `reboundVideo` asignado; si no, se va directo a la pregunta.
+ * En reboundSelect se hace un SORTEO sin repetición entre los candidatos
+ * (todos menos Michel); la fase de vídeo solo se atraviesa si el
+ * participante sorteado tiene `reboundVideo` asignado; si no, se va
+ * directo a la pregunta.
  */
 export type Phase =
   | "welcome"
@@ -93,6 +95,11 @@ export interface GameState {
   michelCorrect: number;
   reboundsOffered: number;
   reboundsWon: number;
+  /**
+   * Ids de participantes ya sorteados para el rebote en esta partida.
+   * El sorteo es sin reemplazo: nadie repite hasta agotar el bombo.
+   */
+  usedRebounders: string[];
   /** Timestamp absoluto (ms) del fin del cronómetro, o null si no hay. */
   deadline: number | null;
   /** Duración del cronómetro actual en segundos (60 o 30). */

@@ -10,7 +10,11 @@
 //  8. Sin puntos duplicados (doble pulsación; respuesta tras fin de tiempo).
 //  9. Exactamente 10 preguntas.
 // 10. Clasificación ordenada con empates en la misma posición.
-// 11. Guardas de fase (transiciones inválidas no cambian el estado).
+// 11. El sorteo del rebote es válido (nunca Michel).
+// 12. Flujo de presentación del rebote (suspense → vídeo → pregunta).
+// 13. Guardas de fase (transiciones inválidas no cambian el estado).
+// 14. Sorteo sin repetición: el bombo no repite hasta agotarse, se
+//     reinicia tras 6 sorteos y con partida nueva.
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -20,6 +24,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const engine = require(join(root, "test", ".engine.bundle.cjs"));
 
 const IDS = ["michel", "anselmo", "juampi", "alfonso", "mariano", "gabi", "pablo"];
+const CANDIDATES = IDS.filter((id) => id !== "michel");
 let passed = 0;
 let failed = 0;
 
@@ -36,6 +41,8 @@ function check(cond, msg) {
 
 const pts = (s, id) => s.scores[id].points;
 const now = 1_000_000;
+// rng determinista que elige el candidato i-ésimo del bombo actual.
+const pick = (i) => () => (i + 0.5) / CANDIDATES.length;
 
 // --- Escenario 1: Michel acierta → +50 exactos --------------------------------
 {
@@ -78,59 +85,63 @@ const now = 1_000_000;
   check(s.reboundsOffered === 1, "3c. el tiempo agotado también cuenta como rebote ofrecido");
 }
 
-// --- Escenario 11: la selección de rebote es manual y validada ----------------
+// --- Escenario 11: el sorteo del rebote es válido -----------------------------
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 0, false);
-  const bad1 = engine.selectRebounder(s, "michel", now);
-  check(bad1 === s, "11a. no se puede elegir a Michel para el rebote");
-  const bad2 = engine.selectRebounder(s, "inexistente");
-  check(bad2 === s, "11b. no se puede elegir un participante inexistente");
-  s = engine.selectRebounder(s, "juampi");
-  check(s.phase === "reboundSuspense", "11c. el organizador elige manualmente: se entra en suspense");
-  check(s.activeParticipantId === "juampi", "11d. el participante activo es el elegido");
-  check(s.deadline === null, "11e. durante el suspense no corre el cronómetro de respuesta");
+  s = engine.drawRebounder(s, pick(1));
+  check(s.phase === "reboundSuspense", "11a. el sorteo entra en suspense");
+  check(s.activeParticipantId === "juampi", "11b. con rng fijo sale el candidato esperado");
+  check(
+    s.usedRebounders.length === 1 && s.usedRebounders[0] === "juampi",
+    "11c. el sorteado queda registrado en el bombo",
+  );
+  check(s.deadline === null, "11d. durante el suspense no corre el cronómetro de respuesta");
   s = engine.startReboundQuestion(s, now + 5000);
-  check(s.phase === "reboundQuestion", "11f. tras el suspense arranca la pregunta del rebote");
-  check(s.deadline === now + 5000 + 30_000, "11g. el cronómetro del rebote son 30 s reales desde la pregunta");
+  check(s.phase === "reboundQuestion", "11e. tras el suspense arranca la pregunta del rebote");
+  check(s.deadline === now + 5000 + 30_000, "11f. el cronómetro del rebote son 30 s reales desde la pregunta");
+  // Guardas del sorteo.
+  const g0 = engine.createInitialState(IDS);
+  check(engine.drawRebounder(g0) === g0, "11g. no hay sorteo en 'welcome'");
 }
 
 // --- Escenario 12: flujo completo de presentación del rebote ------------------
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 2, false); // Michel falla la opción C
-  s = engine.selectRebounder(s, "anselmo");
-  check(s.phase === "reboundSuspense", "12a. tras elegir se entra en suspense");
-  check(s.michelFailedOption === 2, "12b. la opción fallida se conserva en el suspense");
+  s = engine.drawRebounder(s, pick(0));
+  check(s.phase === "reboundSuspense", "12a. tras el sorteo se entra en suspense");
+  check(s.activeParticipantId === "anselmo", "12b. el sorteado es el participante activo");
+  check(s.michelFailedOption === 2, "12c. la opción fallida se conserva en el suspense");
   s = engine.startReboundVideo(s);
-  check(s.phase === "reboundVideo", "12c. con vídeo asignado se presenta al participante");
+  check(s.phase === "reboundVideo", "12d. con vídeo asignado se presenta al participante");
   s = engine.startReboundQuestion(s, now + 15000);
-  check(s.phase === "reboundQuestion", "12d. tras el vídeo arranca la pregunta");
-  check(s.michelFailedOption === 2, "12e. la opción fallida sigue marcada como descartada");
-  check(s.deadline === now + 15000 + 30_000, "12f. los 30 s cuentan desde la pregunta, no desde la elección");
+  check(s.phase === "reboundQuestion", "12e. tras el vídeo arranca la pregunta");
+  check(s.michelFailedOption === 2, "12f. la opción fallida sigue marcada como descartada");
+  check(s.deadline === now + 15000 + 30_000, "12g. los 30 s cuentan desde la pregunta, no desde el sorteo");
   // Sin vídeo asignado: del suspense directo a la pregunta.
   let s2 = engine.startGame(engine.createInitialState(IDS), now);
   s2 = engine.answerMichel(s2, 0, false);
-  s2 = engine.selectRebounder(s2, "mariano");
+  s2 = engine.drawRebounder(s2, pick(3));
   s2 = engine.startReboundQuestion(s2, now + 5000);
-  check(s2.phase === "reboundQuestion", "12g. sin vídeo se salta la presentación");
-  check(s2.activeParticipantId === "mariano", "12h. el participante del rebote se mantiene");
+  check(s2.phase === "reboundQuestion", "12h. sin vídeo se salta la presentación");
+  check(s2.activeParticipantId === "mariano", "12i. el participante del rebote se mantiene");
   // Guardas de las nuevas transiciones.
   let g = engine.startGame(engine.createInitialState(IDS), now);
-  check(engine.startReboundVideo(g) === g, "12i. no hay vídeo sin pasar por el suspense");
-  check(engine.startReboundQuestion(g, now) === g, "12j. no hay pregunta sin suspense ni vídeo");
-  check(engine.answerRebound(g, 0, true) === g, "12k. no se responde en 'welcome'");
+  check(engine.startReboundVideo(g) === g, "12j. no hay vídeo sin pasar por el suspense");
+  check(engine.startReboundQuestion(g, now) === g, "12k. no hay pregunta sin suspense ni vídeo");
+  check(engine.answerRebound(g, 0, true) === g, "12l. no se responde en 'welcome'");
   g = engine.answerMichel(g, 0, false);
-  const gSel = engine.selectRebounder(g, "gabi");
-  check(engine.answerRebound(gSel, 0, true) === gSel, "12l. no se responde durante el suspense");
-  check(engine.expireReboundTimer(gSel) === gSel, "12m. el temporizador no expira en el suspense");
+  const gSel = engine.drawRebounder(g, pick(4));
+  check(engine.answerRebound(gSel, 0, true) === gSel, "12m. no se responde durante el suspense");
+  check(engine.expireReboundTimer(gSel) === gSel, "12n. el temporizador no expira en el suspense");
 }
 
 // --- Escenario 4: el reboteado acierta ----------------------------------------
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 1, false);
-  s = engine.selectRebounder(s, "gabi");
+  s = engine.drawRebounder(s, pick(4));
   s = engine.startReboundQuestion(s, now);
   s = engine.answerRebound(s, 3, true);
   check(s.phase === "reveal", "4a. tras el acierto del rebote se revela");
@@ -144,7 +155,7 @@ const now = 1_000_000;
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 0, false);
-  s = engine.selectRebounder(s, "pablo");
+  s = engine.drawRebounder(s, pick(5));
   s = engine.startReboundQuestion(s, now);
   s = engine.answerRebound(s, 2, false);
   check(s.phase === "reveal", "5a. tras el fallo del rebote se revela");
@@ -156,7 +167,7 @@ const now = 1_000_000;
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 0, false);
-  s = engine.selectRebounder(s, "alfonso");
+  s = engine.drawRebounder(s, pick(2));
   const before = engine.startReboundQuestion(s, now);
   s = engine.expireReboundTimer(before);
   check(s.phase === "reveal", "6a. al agotarse los 30 s se revela la respuesta");
@@ -172,7 +183,7 @@ const now = 1_000_000;
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 0, false);
-  s = engine.selectRebounder(s, "juampi");
+  s = engine.drawRebounder(s, pick(1));
   s = engine.startReboundQuestion(s, now);
   s = engine.answerRebound(s, 1, true); // Juampi arrebata los puntos…
   s = engine.nextQuestion(s, now + 1000);
@@ -190,7 +201,7 @@ const now = 1_000_000;
     s = engine.answerMichel(s, 0, michelOk);
     if (!michelOk) {
       // Al fallar hay que completar el rebote antes de poder avanzar.
-      s = engine.selectRebounder(s, "juampi");
+      s = engine.drawRebounder(s, pick(1));
       s = engine.startReboundQuestion(s, now + q * 1000);
       s = engine.answerRebound(s, 1, false);
     }
@@ -206,17 +217,24 @@ const now = 1_000_000;
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   // Michel: 2 aciertos (100). Juampi: 1 rebote (50). Gabi: 1 rebote (50). Resto: 0.
+  // Ojo: el bombo no repite; el 2.º sorteo se hace sin Juampi disponible.
   const steps = [
-    ["michel", 0, true, null],
-    ["michel", 0, true, null],
-    ["michel", 0, false, "juampi"],
-    ["michel", 0, false, "gabi"],
+    { ok: true },
+    { ok: true },
+    // bombo completo (6) → pick(1) = juampi
+    { ok: false, reb: "juampi", rng: pick(1) },
+    // bombo sin juampi (5) → rng 0.7 → índice 3 = gabi
+    { ok: false, reb: "gabi", rng: () => 0.7 },
   ];
   let t = now;
-  for (const [who, opt, ok, reb] of steps) {
-    if (who === "michel") s = engine.answerMichel(s, opt, ok);
-    if (reb) {
-      s = engine.selectRebounder(s, reb);
+  for (const st of steps) {
+    s = engine.answerMichel(s, 0, st.ok);
+    if (st.reb) {
+      s = engine.drawRebounder(s, st.rng);
+      check(
+        s.activeParticipantId === st.reb,
+        `10x. sorteo ${st.reb}: el bombo entrega al candidato esperado`,
+      );
       s = engine.startReboundQuestion(s, t);
       s = engine.answerRebound(s, 1, true);
     }
@@ -241,11 +259,83 @@ const now = 1_000_000;
   const s = engine.createInitialState(IDS);
   check(engine.answerMichel(s, 0, true) === s, "13a. no se puede responder en 'welcome'");
   check(engine.expireMichelTimer(s) === s, "13b. no expira ningún cronómetro en 'welcome'");
-  check(engine.selectRebounder(s, "juampi") === s, "13c. no hay selección de rebote en 'welcome'");
+  check(engine.drawRebounder(s) === s, "13c. no hay sorteo de rebote en 'welcome'");
   check(engine.nextQuestion(s, now) === s, "13d. no se avanza en 'welcome'");
   let s2 = engine.startGame(engine.createInitialState(IDS), now);
   check(engine.answerRebound(s2, 0, true) === s2, "13e. no se puede responder un rebote en el turno de Michel");
   check(engine.expireReboundTimer(s2) === s2, "13f. no expira el rebote en el turno de Michel");
+}
+
+// --- Escenario 14: sorteo sin repetición ----------------------------------------
+function playReboundRound(s, rng, t) {
+  s = engine.answerMichel(s, 0, false);
+  s = engine.drawRebounder(s, rng);
+  const drawn = s.activeParticipantId;
+  s = engine.startReboundQuestion(s, t);
+  s = engine.answerRebound(s, 1, false);
+  s = engine.nextQuestion(s, t);
+  return { s, drawn };
+}
+{
+  // Sin repetición dentro del ciclo: con rng→0 siempre sale el primero disponible.
+  let s = engine.startGame(engine.createInitialState(IDS), now);
+  s = engine.answerMichel(s, 0, false);
+  s = engine.drawRebounder(s, () => 0);
+  check(s.activeParticipantId === "anselmo", "14a. el sorteo devuelve un candidato válido");
+  check(s.usedRebounders.join(",") === "anselmo", "14b. el bombo registra al sorteado");
+  let t = now;
+  s = engine.startReboundQuestion(s, t);
+  s = engine.answerRebound(s, 1, false);
+  s = engine.nextQuestion(s, t);
+  s = engine.answerMichel(s, 0, false);
+  s = engine.drawRebounder(s, () => 0);
+  check(s.activeParticipantId === "juampi", "14c. sin repetición: sale el siguiente del bombo");
+  check(s.usedRebounders.join(",") === "anselmo,juampi", "14d. el bombo acumula sin repetir");
+}
+{
+  // Ciclo completo de 6 + reinicio del bombo en el 7.º sorteo.
+  let s = engine.startGame(engine.createInitialState(IDS), now);
+  const drawn = [];
+  let t = now;
+  for (let i = 0; i < 6; i++) {
+    const r = playReboundRound(s, () => 0, t);
+    s = r.s;
+    drawn.push(r.drawn);
+    t += 1000;
+  }
+  check(new Set(drawn).size === 6, "14e. 6 sorteos seguidos: 6 participantes distintos");
+  check(drawn.every((id) => id !== "michel"), "14f. Michel nunca sale en el sorteo");
+  check(
+    drawn.slice().sort().join(",") === CANDIDATES.slice().sort().join(","),
+    "14g. el ciclo completo cubre a los 6 candidatos",
+  );
+  check(s.usedRebounders.length === 6, "14h. el bombo queda lleno tras 6 sorteos");
+  const r7 = playReboundRound(s, () => 0, t);
+  check(r7.s.usedRebounders.length === 1, "14i. con el bombo agotado se reinicia el ciclo");
+  check(CANDIDATES.includes(r7.drawn), "14j. el 7.º sorteo devuelve un candidato válido");
+}
+{
+  // El bombo se reinicia con partida nueva.
+  let s = engine.startGame(engine.createInitialState(IDS), now);
+  s = engine.answerMichel(s, 0, false);
+  s = engine.drawRebounder(s, () => 0);
+  check(s.usedRebounders.length === 1, "14k. el bombo acumula durante la partida");
+  s = engine.startGame(s, now + 999);
+  check(s.usedRebounders.length === 0, "14l. partida nueva: el bombo se reinicia");
+  check(s.phase === "michel", "14m. la partida nueva empieza con Michel");
+}
+{
+  // Guardas y estado inicial del bombo.
+  const g0 = engine.createInitialState(IDS);
+  check(
+    Array.isArray(g0.usedRebounders) && g0.usedRebounders.length === 0,
+    "14n. el estado inicial trae el bombo vacío (serializable a localStorage)",
+  );
+  check(engine.drawRebounder(g0) === g0, "14o. no hay sorteo fuera de 'reboundSelect'");
+  let s = engine.startGame(engine.createInitialState(IDS), now);
+  s = engine.answerMichel(s, 0, false);
+  s = engine.drawRebounder(s, () => 0.999999);
+  check(s.activeParticipantId === "pablo", "14p. rng→1 elige al último candidato (nunca a Michel)");
 }
 
 console.log(`\n${passed} comprobaciones superadas, ${failed} fallidas.`);

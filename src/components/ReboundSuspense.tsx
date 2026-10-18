@@ -9,14 +9,14 @@ const CYCLE_MS = 140;
 const SETTLE_MS = 800;
 
 interface Props {
-  /** El participante elegido por el organizador (la ruleta termina en él). */
+  /** El participante sorteado (la ruleta termina en él). */
   participant: Participant;
   candidates: Participant[];
   onDone: () => void;
 }
 
 /**
- * Animación de suspense de 5 s tras la elección manual del rebote:
+ * Animación de suspense de 5 s tras el SORTEO del rebote:
  * las fotos ciclan rápido como una ruleta, con barra de progreso.
  * Avanza automáticamente; un clic la salta.
  */

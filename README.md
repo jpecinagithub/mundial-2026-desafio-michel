@@ -4,10 +4,12 @@ Concurso interactivo de 10 preguntas difíciles sobre la selección española en
 Mundial de Fútbol 2026, con Michel como protagonista y sistema de rebote.
 
 - **10 rondas**: todas empiezan con Michel (60 segundos por pregunta).
-- Si Michel falla o agota su tiempo → **¡rebote!**: el organizador elige
-  manualmente quién lo intenta. Entonces hay una animación de suspense de
-  5 segundos y se reproduce el **vídeo personal** del participante elegido
-  como presentación; después llega la pregunta del rebote (30 segundos).
+- Si Michel falla o agota su tiempo → **¡rebote!**: se hace un **sorteo**
+  entre los 6 participantes (todos menos Michel), **sin repetición** en la
+  partida —quien ya ha salido no vuelve a salir hasta agotar el bombo—.
+  Entonces hay una animación de suspense de 5 segundos y se reproduce el
+  **vídeo personal** del participante sorteado como presentación; después
+  llega la pregunta del rebote (30 segundos).
   La opción fallida por Michel queda descartada. Si el participante aún
   no tiene vídeo asignado, se salta esa parte y va directo a la pregunta.
 - **50 puntos** por acierto, sin penalizaciones. Marcador en directo,
@@ -40,7 +42,7 @@ Abre la URL que indique la terminal (normalmente http://localhost:5173).
 
 ```bash
 npm run build        # compilación de producción (TypeScript + Vite) en dist/
-npm run test:engine  # 76 comprobaciones del motor del juego (máquina de estados)
+npm run test:engine  # 95 comprobaciones del motor del juego (máquina de estados)
 npm run preview      # sirve dist/ en local para probar el build
 ```
 
@@ -88,9 +90,13 @@ fondo se pausa durante el vídeo y se reanuda después. Los vídeos quedan en
 la caché del service worker: funcionan sin conexión tras la primera carga.
 
 Flujo completo del rebote:
-`reboundSelect` (el organizador elige) → `reboundSuspense` (5 s) →
-`reboundVideo` (solo si hay vídeo) → `reboundQuestion` (30 s) → `reveal`.
-El cronómetro de 30 s arranca con la pregunta, no con la elección.
+`reboundSelect` (botón 🎲 SORTEAR: sorteo sin repetición entre los 6;
+si el bombo se agota se reinicia) → `reboundSuspense` (5 s, la ruleta
+cae en el sorteado) → `reboundVideo` (solo si hay vídeo) →
+`reboundQuestion` (30 s) → `reveal`.
+El cronómetro de 30 s arranca con la pregunta, no con el sorteo.
+El bombo (`usedRebounders`) se guarda en `localStorage` y se reinicia
+con cada partida nueva.
 
 ## Cómo modificar las preguntas
 

@@ -58,6 +58,13 @@ function sanitize(raw: unknown): GameState | null {
     michelCorrect: num(raw.michelCorrect, 0),
     reboundsOffered: num(raw.reboundsOffered, 0),
     reboundsWon: num(raw.reboundsWon, 0),
+    // El bombo del sorteo persiste: recargar no debe permitir repeticiones.
+    usedRebounders: Array.isArray(raw.usedRebounders)
+      ? (raw.usedRebounders as unknown[]).filter(
+          (id): id is string =>
+            typeof id === "string" && id !== engine.MICHEL_ID && ids.includes(id),
+        )
+      : [],
     deadline: typeof raw.deadline === "number" ? raw.deadline : null,
     timerSeconds: num(raw.timerSeconds, engine.MICHEL_SECONDS),
     startedAt: typeof raw.startedAt === "number" ? raw.startedAt : null,
@@ -122,8 +129,9 @@ export function useGame() {
     setState((s) => engine.expireMichelTimer(s));
   }, []);
 
-  const selectRebounder = useCallback((participantId: string) => {
-    setState((s) => engine.selectRebounder(s, participantId));
+  /** Sorteo del participante del rebote (sin repetición en la partida). */
+  const drawRebounder = useCallback(() => {
+    setState((s) => engine.drawRebounder(s));
   }, []);
 
   /** Tras el suspense: el participante tiene vídeo personal asignado. */
@@ -176,7 +184,7 @@ export function useGame() {
     start,
     answerMichel,
     expireMichel,
-    selectRebounder,
+    drawRebounder,
     startReboundVideo,
     startReboundQuestion,
     answerRebound,
