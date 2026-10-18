@@ -3,16 +3,21 @@ import type { Question } from "../types/game";
 /**
  * Las 10 preguntas del concurso: hechos REALES y verificados del Mundial
  * de Fútbol 2026 (11 junio – 19 julio 2026), con prioridad en los partidos
- * de España. Dificultad 8-9/10: minutos, tarjetas, goleadores, paradas,
- * sustituciones y secuencias concretas de jugadas.
+ * de España. Dificultad 9-10/10: minutos exactos de sustituciones,
+ * secuencias encadenadas de jugadas, protagonistas secundarios, tarjetas
+ * poco obvias, intervenciones arbitrales y estadísticas particulares.
  *
  * Cada pregunta lleva su fuente documental verificable. PROHIBIDO inventar
  * datos: si un dato no puede verificarse, se sustituye por otro hecho
- * documentado (ver informe de investigación).
+ * documentado (varios datos dudosos se descartaron en la investigación:
+ * el supuesto "octava selección con 2+ Mundiales" —es la séptima—, el
+ * minuto exacto de entrada de Merino ante Bélgica —las fuentes discrepan
+ * entre el 82' y el 86'— y una afirmación aislada sobre David Raya en el
+ * descuento de la final, sin corroboración).
  *
  * Para corregir, sustituir o añadir preguntas basta con editar este archivo.
  * Las respuestas correctas están repartidas entre A, B, C y D sin patrones
- * evidentes (A×3, B×3, C×2, D×2).
+ * evidentes (A×2, B×3, C×2, D×3).
  *
  * Sin imágenes asociadas: no se localizó ninguna fotografía verdaderamente
  * relevante para estos hechos con licencia de uso clara y documentada; según
@@ -23,190 +28,184 @@ export const QUESTIONS: Question[] = [
   {
     id: "q1",
     question:
-      "En la final contra Argentina, ¿quién peinó de cabeza el centro de Pedro Porro desde la derecha para dejar a Ferran Torres solo ante Emiliano Martínez en el gol del minuto 106?",
-    options: ["Lamine Yamal", "Nico Williams", "Mikel Merino", "Dani Olmo"],
+      "De la Fuente revolucionó el once ante Arabia Saudí respecto al debut contra Cabo Verde: ¿qué cuatro jugadores entraron como titulares?",
+    options: [
+      "Mikel Merino, Nico Williams, Yeremy Pino y Ferran Torres",
+      "Pedro Porro, Dani Olmo, Álex Baena y Lamine Yamal",
+      "Fabián Ruiz, Pedri, Gavi y Mikel Oyarzabal",
+      "Marcos Llorente, Pau Cubarsí, Laporte y Cucurella",
+    ],
     correctIndex: 1,
     explanation:
-      "Torres anticipó la prolongación de cabeza de Nico Williams dentro del área y cruzó el balón a la escuadra: centro de Porro, peinada de Williams y remate del MVP de la final para el 1-0 definitivo en la prórroga.",
+      "Entraron Porro, Olmo, Baena y Lamine Yamal por Marcos Llorente, Fabián, Gavi y Ferran Torres. España goleó 4-0 y recuperó su mejor versión.",
     sources: [
       {
-        label: "ANSA Latina",
-        url: "https://www.ansalatina.com/americalatina/noticia/deportes/2026/07/20/espana-campeon_89793356-46ba-4d35-9210-6c022d60e4fb.html",
+        label: "Flashscore",
+        url: "https://www.flashscore.es/noticias/espana-recupera-su-mejor-version-y-arrolla-a-arabia-saudi-4-0/W0jFUBzi/",
       },
-      { label: "Lado.mx", url: "https://lado.mx/noticia/21371940/" },
     ],
   },
   {
     id: "q2",
     question:
-      "¿Sobre qué jugador español cometió Enzo Fernández la entrada tardía que le costó la segunda amarilla y la expulsión en el minuto 90+3 de la final?",
-    options: ["Rodri", "Lamine Yamal", "Pau Cubarsí", "Pedri"],
-    correctIndex: 2,
+      "El 4-0 ante Arabia Saudí llegó en propia puerta de Tambakti tras un córner en el 49': ¿quién lo botó?",
+    options: ["Lamine Yamal", "Pedri", "Dani Olmo", "Álex Baena"],
+    correctIndex: 3,
     explanation:
-      "Fernández, que ya había visto amarilla por protestar, llegó tarde sobre Cubarsí en el descuento; el árbitro Slavko Vinčić le mostró la segunda amarilla y Argentina jugó la prórroga con diez jugadores.",
+      "Córner de Baena desde la derecha: volea de Cucurella, paradón de Alowais y el rechace rebotó en Hassan Al-Tambakti hacia su propia portería.",
     sources: [
       {
-        label: "ESPN",
-        url: "https://www.espn.ph/football/story/_/id/49403084/2026-world-cup-final-spain-argentina-score-ferran-torres-champions-title",
-      },
-      {
-        label: "Tips.gg",
-        url: "https://tips.gg/es/article/extra-time-winner-sees-spain-see-off-10-man-argentina-win-second-world-cup-story/",
+        label: "TRT Español",
+        url: "https://www.trtespanol.com/article/bac7f7feec5a",
       },
     ],
   },
   {
     id: "q3",
     question:
-      "En el minuto 17 del Portugal-España de octavos de final, ¿a qué dos jugadores españoles les detuvo Diogo Costa una doble ocasión consecutiva?",
+      "Tras el error de Muslera en el 0-1 de Baena (42'), ¿qué cambio hizo Bielsa al descanso del Uruguay-España?",
     options: [
-      "Lamine Yamal y Álex Baena",
-      "Nico Williams y Mikel Oyarzabal",
-      "Dani Olmo y Ferran Torres",
-      "Pedri y Fabián Ruiz",
+      "Nicolás de la Cruz por Manuel Ugarte",
+      "Brian Rodríguez por Antonio Sanabria",
+      "Sergio Rochet por Fernando Muslera",
+      "Ninguno: mantuvo a Muslera bajo palos",
     ],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation:
-      "Costa sostuvo a Portugal en el arranque con una doble parada ante Yamal y Baena; aun así, el gol de Merino en el 90+1' decidió el Clásico Ibérico.",
+      "Muslera falló en el gol de Baena y no volvió tras el descanso: Bielsa puso a Sergio Rochet. Lo recoge la ficha oficial de la RFEF.",
     sources: [
       {
-        label: "OneFootball/DAZN",
-        url: "https://onefootball.com/de/news/merino-heroe-tardio-el-uno-a-uno-dazn-de-portugal-espana-43105873",
+        label: "RFEF",
+        url: "https://rfef.es/es/noticias/espana-doma-el-volcan-rumbo-dieciseisavos-0-1",
       },
     ],
   },
   {
     id: "q4",
     question:
-      "¿Cuántos disparos entre los tres palos registró Argentina en los 90 minutos reglamentarios de la final?",
-    options: ["Uno", "Dos", "Tres", "Ninguno"],
-    correctIndex: 3,
+      "Ante Austria (3-0) en dieciseisavos, Oyarzabal marcó en el 36' y en el 89': ¿quién dio las dos asistencias?",
+    options: ["Marc Cucurella", "Lamine Yamal", "Álex Baena", "Dani Olmo"],
+    correctIndex: 0,
     explanation:
-      "Argentina terminó la primera parte sin tiros, sin córners y sin toques en el área española; su primer disparo no llegó hasta un remate bloqueado de Messi en el minuto 117, ya en la prórroga.",
+      "Cucurella asistió en los dos tantos: centro raso en el 36' y segundo pase en el 89'. El 2-0 fue de Pedro Porro a centro de Baena.",
     sources: [
       {
-        label: "ESPN",
-        url: "https://www.espn.ph/football/story/_/id/49403084/2026-world-cup-final-spain-argentina-score-ferran-torres-champions-title",
-      },
-      {
-        label: "Overhere Toronto (Reuters)",
-        url: "https://www.overheretoronto.com/spain-crowned-2026-world-cup-champions-after-extra-time-win-over-argentina/",
+        label: "DimeCuba",
+        url: "https://www.dimecuba.com/revista/vivir-trabajar-usa/resultados-del-mundial-2026-hoy-todos-los-partidos-y-goles-del-2-de-julio/",
       },
     ],
   },
   {
     id: "q5",
     question:
-      "¿Por qué anuló el árbitro el gol que Nico Williams marcó a puerta vacía en el arranque de la prórroga de la final?",
-    options: [
-      "Fuera de juego de Ferran Torres",
-      "Mano de Lamine Yamal en la jugada previa",
-      "Falta de Mikel Merino sobre Nicolás Otamendi en la jugada previa",
-      "Falta de Rodri sobre Mac Allister",
-    ],
-    correctIndex: 2,
+      "Charles De Ketelaere fue el primero en batir a Unai Simón en un Mundial desde... ¿quién?",
+    options: ["Kai Havertz", "Ao Tanaka", "Álvaro Morata", "Niclas Füllkrug"],
+    correctIndex: 1,
     explanation:
-      "Williams fue el más rápido en reaccionar a los cinco minutos de la prórroga, pero Vinčić detectó una falta de Merino sobre Otamendi antes del remate y el tanto no subió al marcador.",
+      "El último en marcarle a Unai en un Mundial había sido el japonés Ao Tanaka el 1 de diciembre de 2022, en Qatar.",
     sources: [
       {
-        label: "Tips.gg",
-        url: "https://tips.gg/es/article/extra-time-winner-sees-spain-see-off-10-man-argentina-win-second-world-cup-story/",
+        label: "El Informante Perú",
+        url: "http://elinformanteperu.com/index.php/2026/07/12/espana-se-clasifico-a-semifinales-del-mundial-por-segunda-vez-en-su-historia/",
       },
-      { label: "Lado.mx", url: "https://lado.mx/noticia/21371940/" },
     ],
   },
   {
     id: "q6",
     question:
-      "En la semifinal ante Francia, ¿qué defensa cometió el penalti sobre Lamine Yamal que Mikel Oyarzabal transformó en el 0-1 (minuto 22)?",
-    options: ["William Saliba", "Lucas Digne", "Théo Hernández", "Jules Koundé"],
-    correctIndex: 1,
+      "Ante Bélgica, con 1-1 en el marcador, De la Fuente hizo sus cambios más tempranos de todo el Mundial: ¿en qué minuto y quiénes entraron?",
+    options: [
+      "60': Merino y Fabián",
+      "70': Nico Williams y Llorente",
+      "76': Ferran Torres y Merino",
+      "55': Pedri y Ferran Torres",
+    ],
+    correctIndex: 3,
     explanation:
-      "Yamal aprovechó un mal control de Digne dentro del área y provocó la infracción del lateral; el árbitro Iván Bartón no dudó y Oyarzabal la colocó a media altura, a la derecha de Maignan, que adivinó el lado pero no llegó.",
+      "En el 55', sin el fútbol de octavos y con empate en el marcador, movió el banquillo antes que en ningún otro partido del torneo: Pedri y Ferran Torres.",
     sources: [
       {
-        label: "OneFootball",
-        url: "https://onefootball.com/id/berita/espana-a-la-final-las-claves-del-partido-esto-es-lo-que-paso-43139584",
-      },
-      {
-        label: "DeporTV",
-        url: "https://deportv.gob.ar/futbol/espana-adueno-pelota-derroto-francia-meterse-final-mundial-2026-nid:15020",
+        label: "El Informante Perú",
+        url: "http://elinformanteperu.com/index.php/2026/07/12/espana-se-clasifico-a-semifinales-del-mundial-por-segunda-vez-en-su-historia/",
       },
     ],
   },
   {
     id: "q7",
     question:
-      "¿Quién filtró el pase al área que Pedro Porro definió con un disparo cruzado ante Maignan para el 2-0 de la semifinal (minuto 58)?",
-    options: ["Dani Olmo", "Lamine Yamal", "Fabián Ruiz", "Álex Baena"],
+      "En el minuto 14 de la semifinal, Olise clavó los tacos en el tobillo de Rodri: ¿qué decidió el árbitro Iván Barton?",
+    options: [
+      "Solo señaló la falta: ni tarjeta ni revisión del VAR",
+      "Amarilla a Olise",
+      "Roja directa a Olise",
+      "El VAR lo llamó al monitor",
+    ],
     correctIndex: 0,
     explanation:
-      "Al minuto 58, Olmo filtró un balón al área y el lateral Porro apareció para definir cruzado y sentenciar el pase a la final, la segunda de la historia de España tras la de 2010.",
+      "Barton solo pitó la falta y el VAR (Kwiatkowski) no intervino, pese a lo notorio de la entrada. La acción abrió un gran debate posterior.",
     sources: [
       {
-        label: "SoyFútbol",
-        url: "https://www.soyfutbol.com/noticias/mundial-2026-espana-impone-su-autoridad-y-elimina-a-francia-para-instalarse-en-la-final-20260714-0038.html",
-      },
-      {
         label: "Claro Sports",
-        url: "https://www.clarosports.com/futbol/mundial-2026/van-por-la-segunda-espana-avanza-a-la-final-del-mundial-2026/",
+        url: "https://www.clarosports.com/futbol/mundial-2026/polemica-en-francia-vs-espana-olise-llega-tarde-sobre-el-tobillo-de-rodri-era-tarjeta-roja/",
       },
     ],
   },
   {
     id: "q8",
     question:
-      "¿Qué portero belga no pudo retener el disparo lejano de Pau Cubarsí cuyo rechace empujó Mikel Merino para el 2-1 en el minuto 88 de los cuartos de final?",
-    options: ["Thibaut Courtois", "Koen Casteels", "Matz Sels", "Senne Lammens"],
-    correctIndex: 3,
+      "Tras la semifinal, la FIFA multó a España con 10.000 dólares: ¿por qué?",
+    options: [
+      "Por la entrada de Olise sobre Rodri",
+      "Por retrasar una reanudación",
+      "Por la tarjeta amarilla de Cucurella en el 31'",
+      "Por protestas del banquillo",
+    ],
+    correctIndex: 2,
     explanation:
-      "Courtois se había lesionado y abandonó el campo entre lágrimas; su sustituto Lammens dejó un rechace corto tras el disparo de Cubarsí y Merino —que había entrado solo dos minutos antes— lo empujó a la red.",
+      "Cucurella vio amarilla en el 31' por frenar a Olise; según el Código Disciplinario FIFA 2026, esa única amonestación supuso 10.000 $ de multa.",
     sources: [
       {
-        label: "OneFootball/DAZN",
-        url: "https://onefootball.com/es/noticias/merino-vuelve-a-golpear-el-uno-a-uno-dazn-de-espana-belgica-43123780",
-      },
-      {
-        label: "Impacta Mag",
-        url: "https://www.impactamag.com/2026/07/merino-vuelve-ser-heroe-y-espana.html",
+        label: "Bolavip",
+        url: "https://bolavip.com/mundial/fifa-sanciona-al-primer-finalista-del-mundial-el-castigo-a-espana-tras-la-victoria-a-francia",
       },
     ],
   },
   {
     id: "q9",
     question:
-      "¿Quién dio la asistencia del gol de Mikel Merino en el 90+1' que eliminó a Portugal en octavos de final?",
-    options: ["Ferran Torres", "Lamine Yamal", "Dani Olmo", "Nico Williams"],
-    correctIndex: 0,
+      "Ferran Torres marcó el gol del título en el 106' de la final: ¿cuántos goles llevaba en el Mundial antes de ese partido?",
+    options: [
+      "1, ante Arabia Saudí",
+      "0: el del título fue su primero",
+      "2, ante Arabia y Bélgica",
+      "1, ante Portugal",
+    ],
+    correctIndex: 1,
     explanation:
-      "Tras una falta de Bernardo Silva y un saque rápido, Ferran Torres —recién ingresado— filtró un pase magistral entre los centrales y Merino, que había entrado en el 85', definió de zurda al palo corto de Diogo Costa.",
+      "Llegó a la final sin haber marcado: le anularon un gol por fuera de juego ante Arabia y estrelló dos balones en el larguero. Su primer tanto fue el del título.",
     sources: [
       {
-        label: "Betsson Sport",
-        url: "https://betsson.sport/es/noticias/futbol/mundial/extasis-de-la-roja-europea-merino-tumba-a-portugal-en-el-91-y-despide-a-cristiano-de-los-mundiales/",
+        label: "OneFootball",
+        url: "https://onefootball.com/it/notizie/espana-conquisto-la-eternidad-ferran-torres-destrono-a-argentina-43160421",
       },
       {
-        label: "OneFootball/DAZN",
-        url: "https://onefootball.com/de/news/merino-heroe-tardio-el-uno-a-uno-dazn-de-portugal-espana-43105873",
+        label: "HoyDiario",
+        url: "https://hoydiario.es/noticias/futbol/mundial-2026/espana-campeon-mundial-2026-ferran-torres.html",
       },
     ],
   },
   {
     id: "q10",
     question:
-      "¿Qué jugador uruguayo fue expulsado en el tiempo de descuento del Uruguay-España (0-1) que cerró el Grupo H?",
-    options: ["Federico Valverde", "Agustín Canobbio", "Rodrigo Bentancur", "Mathías Olivera"],
-    correctIndex: 1,
+      "En la reconstrucción de la jugada del 1-0 de la final, ¿quién dio el primer pase de la secuencia del gol?",
+    options: ["Rodri", "Pedri", "Mikel Merino", "Martín Zubimendi"],
+    correctIndex: 3,
     explanation:
-      "Con Uruguay ya eliminada y desquiciada, Canobbio vio la roja en el minuto 95 del árbitro Ismail Elfath, en un partido en el que Valverde había sido sustituido en el 56'.",
+      "Zubimendi encontró a Lamine en la derecha, Lamine descargó para Porro, centro al segundo palo, peinada de cabeza de Nico Williams y zurdazo de Ferran. Fue el 20º remate de España; Argentina aún no había rematado.",
     sources: [
       {
-        label: "Estadio Deportivo",
-        url: "https://www.estadiodeportivo.com/futbol/mundial/uruguay-espana-alex-baena-firma-pase-dieciseisavos-final-guerra-guadalajara-20260627-540925.html",
-      },
-      {
-        label: "El Heraldo de Saltillo",
-        url: "https://elheraldodesaltillo.mx/2026/06/26/espana-vence-a-uruguay-y-avanza-como-lider-la-celeste-queda-eliminada/",
+        label: "OneFootball",
+        url: "https://onefootball.com/it/notizie/espana-conquisto-la-eternidad-ferran-torres-destrono-a-argentina-43160421",
       },
     ],
   },
