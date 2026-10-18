@@ -181,16 +181,16 @@ export const QUESTIONS: Question[] = [
   {
     id: "q9",
     question:
-      "Ferran Torres marcó el gol del título en el 106' de la final: ¿cuántos goles llevaba en el Mundial antes de ese partido?",
+      "Ferran Torres decidió la final en la prórroga. ¿En qué minuto marcó su primer gol del Mundial?",
     options: [
-      "1, ante Arabia Saudí",
-      "0: el del título fue su primero",
-      "2, ante Arabia y Bélgica",
-      "1, ante Portugal",
+      "En el 90+1' ante Portugal",
+      "En el 88' ante Bélgica",
+      "En el 106' de la final ante Argentina",
+      "En el 55' ante Bélgica",
     ],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation:
-      "Llegó a la final sin haber marcado: le anularon un gol por fuera de juego ante Arabia y estrelló dos balones en el larguero. Su primer tanto fue el del título.",
+      "Su primer gol del torneo fue el del título, en el 106' de la final ante Argentina. En el 90+1' ante Portugal dio la asistencia del gol de Merino (no marcó él); en el 88' ante Bélgica el goleador fue Merino; y en el 55' ante Bélgica acababa de saltar al campo. Llegó a la final sin marcar: le habían anulado un gol por fuera de juego ante Arabia y había estrellado dos balones en el larguero.",
     sources: [
       {
         label: "OneFootball",
@@ -199,6 +199,10 @@ export const QUESTIONS: Question[] = [
       {
         label: "HoyDiario",
         url: "https://hoydiario.es/noticias/futbol/mundial-2026/espana-campeon-mundial-2026-ferran-torres.html",
+      },
+      {
+        label: "ANSA Latina",
+        url: "https://www.ansalatina.com/americalatina/noticia/deportes/2026/07/20/espana-campeon_89793356-46ba-4d35-9210-6c022d60e4fb.html",
       },
     ],
   },
