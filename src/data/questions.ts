@@ -157,16 +157,16 @@ export const QUESTIONS: Question[] = [
   {
     id: "q8",
     question:
-      "Tras la semifinal, la FIFA multó a España con 10.000 dólares: ¿por qué?",
+      "Tras la semifinal, la FIFA multó a España con 10.000 $ y a Francia con 20.000 $ por tarjetas amarillas. ¿Qué tres jugadores las vieron?",
     options: [
-      "Por la entrada de Olise sobre Rodri",
-      "Por retrasar una reanudación",
-      "Por la tarjeta amarilla de Cucurella en el 31'",
-      "Por protestas del banquillo",
+      "Rodri, Rabiot y Mbappé",
+      "Cucurella, Olise y Mbappé",
+      "Cucurella, Rabiot y Mbappé",
+      "Oyarzabal, Digne y Rabiot",
     ],
     correctIndex: 2,
     explanation:
-      "Cucurella vio amarilla en el 31' por frenar a Olise; según el Código Disciplinario FIFA 2026, esa única amonestación supuso 10.000 $ de multa.",
+      "La FIFA aplica 10.000 $ por tarjeta (anexo I del Código Disciplinario 2026): la amarilla de Cucurella le costó a España 10.000 $, y las de Rabiot y Mbappé le costaron a Francia 20.000 $.",
     sources: [
       {
         label: "Bolavip",
