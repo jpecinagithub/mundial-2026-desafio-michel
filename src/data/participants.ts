@@ -20,7 +20,7 @@ import type { Participant } from "../types/game";
 export const PARTICIPANTS: Participant[] = [
   { id: "michel", name: "Michel", photo: "/participants/michel.png", isProtagonist: true },
   { id: "anselmo", name: "Anselmo", photo: "/participants/anselmo.png", reboundVideo: "/videos/rebote-setas.mp4" },
-  { id: "juampi", name: "Juampi", photo: "/participants/juampi.png" },
+  { id: "juampi", name: "Juampi", photo: "/participants/juampi.png", reboundVideo: "/videos/rebote-monopoly.mp4" },
   { id: "alfonso", name: "Alfonso", photo: "/participants/alfonso.png", reboundVideo: "/videos/rebote-tenis.mp4" },
   { id: "mariano", name: "Mariano", photo: "/participants/mariano.png", reboundVideo: "/videos/rebote-fumador.mp4" },
   { id: "gabi", name: "Gabi", photo: "/participants/gabi.png", reboundVideo: "/videos/rebote-hacker.mp4" },
