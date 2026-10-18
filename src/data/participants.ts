@@ -22,7 +22,7 @@ export const PARTICIPANTS: Participant[] = [
   { id: "anselmo", name: "Anselmo", photo: "/participants/anselmo.png", reboundVideo: "/videos/rebote-setas.mp4" },
   { id: "juampi", name: "Juampi", photo: "/participants/juampi.png" },
   { id: "alfonso", name: "Alfonso", photo: "/participants/alfonso.png", reboundVideo: "/videos/rebote-tenis.mp4" },
-  { id: "mariano", name: "Mariano", photo: "/participants/mariano.png" },
+  { id: "mariano", name: "Mariano", photo: "/participants/mariano.png", reboundVideo: "/videos/rebote-fumador.mp4" },
   { id: "gabi", name: "Gabi", photo: "/participants/gabi.png", reboundVideo: "/videos/rebote-hacker.mp4" },
   { id: "pablo", name: "Pablo", photo: "/participants/pablo.png", reboundVideo: "/videos/rebote-ciclismo.mp4" },
 ];
