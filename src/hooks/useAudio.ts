@@ -321,6 +321,11 @@ export function useAudioEngine() {
   const [muted, setMuted] = useState(prefs.muted);
 
   const changeVolume = useCallback((v: number) => {
+    // Mover el volumen reactiva el sonido si estaba silenciado.
+    if (prefs.muted) {
+      setMutedValue(false);
+      setMuted(false);
+    }
     setVolumeValue(v);
     setVolume(prefs.volume);
   }, []);
