@@ -15,13 +15,13 @@ import type { Participant } from "../types/game";
  * con sus iniciales: NUNCA se inventan fotografías ni se usan genéricas.
  */
 export const PARTICIPANTS: Participant[] = [
-  { id: "michel", name: "Michel", photo: "/participants/michel.jpg", isProtagonist: true },
-  { id: "anselmo", name: "Anselmo", photo: "/participants/anselmo.jpg" },
-  { id: "juampi", name: "Juampi", photo: "/participants/juampi.jpg" },
-  { id: "alfonso", name: "Alfonso", photo: "/participants/alfonso.jpg" },
-  { id: "mariano", name: "Mariano", photo: "/participants/mariano.jpg" },
-  { id: "gabi", name: "Gabi", photo: "/participants/gabi.jpg" },
-  { id: "pablo", name: "Pablo", photo: "/participants/pablo.jpg" },
+  { id: "michel", name: "Michel", photo: "/participants/michel.png", isProtagonist: true },
+  { id: "anselmo", name: "Anselmo", photo: "/participants/anselmo.png" },
+  { id: "juampi", name: "Juampi", photo: "/participants/juampi.png" },
+  { id: "alfonso", name: "Alfonso", photo: "/participants/alfonso.png" },
+  { id: "mariano", name: "Mariano", photo: "/participants/mariano.png" },
+  { id: "gabi", name: "Gabi", photo: "/participants/gabi.png" },
+  { id: "pablo", name: "Pablo", photo: "/participants/pablo.png" },
 ];
 
 export function getParticipant(id: string): Participant | undefined {

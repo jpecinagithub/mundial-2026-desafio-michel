@@ -2,15 +2,19 @@
 
 El **nombre del archivo identifica al participante**. Coloca aquí una foto por persona:
 
-| Archivo          | Participante        |
-|------------------|---------------------|
-| `michel.jpg`     | Michel (protagonista) |
-| `anselmo.jpg`    | Anselmo             |
-| `juampi.jpg`     | Juampi              |
-| `alfonso.jpg`    | Alfonso             |
-| `mariano.jpg`    | Mariano             |
-| `gabi.jpg`       | Gabi                |
-| `pablo.jpg`      | Pablo               |
+| Archivo          | Participante          |
+|------------------|-----------------------|
+| `michel.png`     | Michel (protagonista) |
+| `anselmo.png`    | Anselmo               |
+| `juampi.png`     | Juampi                |
+| `alfonso.png`    | Alfonso               |
+| `mariano.png`    | Mariano               |
+| `gabi.png`       | Gabi                  |
+| `pablo.png`      | Pablo                 |
+
+> Nota (18-oct-2026): el mapeo nombre→foto se asumió por el orden de envío de
+> las fotos; pendiente confirmar con Jon que cada foto corresponde a la
+> persona indicada.
 
 **Reglas:**
 

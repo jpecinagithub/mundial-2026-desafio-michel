@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["icons/*.png", "participants/*.jpg", "questions/*.jpg"],
+      includeAssets: ["icons/*.png", "participants/*.png", "questions/*.jpg"],
       manifest: {
         name: "Mundial 2026 — El Desafío de Michel",
         short_name: "Desafío Michel",
