@@ -8,6 +8,8 @@ import { CountdownTimer } from "../components/CountdownTimer";
 import { Footer } from "../components/Footer";
 import { ParticipantPhoto } from "../components/ParticipantPhoto";
 import { ReboundSelection } from "../components/ReboundSelection";
+import { ReboundSuspense } from "../components/ReboundSuspense";
+import { ReboundVideo } from "../components/ReboundVideo";
 import { RevealCard } from "../components/RevealCard";
 import { Scoreboard } from "../components/Scoreboard";
 import { TopBar } from "../components/TopBar";
@@ -51,14 +53,14 @@ export function GameScreen({ game, audio }: Props) {
     if (p === "michel") {
       sfxTimeout();
       expireMichel();
-    } else if (p === "rebound") {
+    } else if (p === "reboundQuestion") {
       sfxTimeout();
       expireRebound();
     }
   }, [expireMichel, expireRebound]);
 
   const remainingMs = useCountdown(
-    phase === "michel" || phase === "rebound" ? state.deadline : null,
+    phase === "michel" || phase === "reboundQuestion" ? state.deadline : null,
     handleExpire,
     true,
   );
@@ -83,10 +85,22 @@ export function GameScreen({ game, audio }: Props) {
     }
   }, [game]);
 
-  const isAnswering = phase === "michel" || phase === "rebound";
-  const isRebound = phase === "rebound";
+  const isAnswering = phase === "michel" || phase === "reboundQuestion";
+  const isRebound = phase === "reboundQuestion";
   const activeParticipant =
     PARTICIPANTS.find((p) => p.id === state.activeParticipantId) ?? getProtagonist();
+
+  // Tras el suspense: si el participante tiene vídeo personal asignado se
+  // presenta con él; si no, se salta la fase de vídeo y va a la pregunta.
+  const handleSuspenseDone = useCallback(() => {
+    const p =
+      PARTICIPANTS.find((x) => x.id === state.activeParticipantId) ?? getProtagonist();
+    if (p.reboundVideo) {
+      game.startReboundVideo();
+    } else {
+      game.startReboundQuestion();
+    }
+  }, [game, state.activeParticipantId]);
   const rebounderName =
     state.activeParticipantId !== "michel" ? activeParticipant.name : null;
 
@@ -153,6 +167,23 @@ export function GameScreen({ game, audio }: Props) {
 
         {phase === "reboundSelect" && (
           <ReboundSelectWrap key={state.questionIndex} game={game} />
+        )}
+
+        {phase === "reboundSuspense" && (
+          <ReboundSuspense
+            key={`${state.questionIndex}-${state.activeParticipantId}`}
+            participant={activeParticipant}
+            candidates={getReboundCandidates()}
+            onDone={handleSuspenseDone}
+          />
+        )}
+
+        {phase === "reboundVideo" && (
+          <ReboundVideo
+            key={`${state.questionIndex}-${state.activeParticipantId}`}
+            participant={activeParticipant}
+            onDone={() => game.startReboundQuestion()}
+          />
         )}
 
         {phase === "reveal" && question && (

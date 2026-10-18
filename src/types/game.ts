@@ -9,6 +9,13 @@ export interface Participant {
    */
   photo: string;
   isProtagonist?: boolean;
+  /**
+   * Vídeo personal de presentación para el rebote, ruta en /public,
+   * p. ej. "/videos/rebote-anselmo.mp4". OPCIONAL: si no está asignado,
+   * el flujo del rebote salta la fase de vídeo y va directo a la pregunta.
+   * Michel nunca lo lleva (no rebota).
+   */
+  reboundVideo?: string;
 }
 
 export interface QuestionSource {
@@ -46,13 +53,18 @@ export interface Question {
 
 /**
  * Máquina de estados del concurso:
- * welcome → michel → (reveal | reboundSelect → rebound → reveal) → … → final
+ * welcome → michel → (reveal | reboundSelect → reboundSuspense
+ *   → [reboundVideo] → reboundQuestion → reveal) → … → final
+ * La fase de vídeo solo se atraviesa si el participante tiene
+ * `reboundVideo` asignado; si no, se va directo a la pregunta.
  */
 export type Phase =
   | "welcome"
   | "michel"
   | "reboundSelect"
-  | "rebound"
+  | "reboundSuspense"
+  | "reboundVideo"
+  | "reboundQuestion"
   | "reveal"
   | "final";
 

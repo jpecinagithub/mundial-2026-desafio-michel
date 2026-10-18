@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["icons/*.png", "participants/*.png", "questions/*.jpg"],
+      includeAssets: ["icons/*.png", "participants/*.png", "questions/*.jpg", "videos/*.mp4"],
       manifest: {
         name: "Mundial 2026 — El Desafío de Michel",
         short_name: "Desafío Michel",
@@ -40,9 +40,12 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Todo el juego (JS, CSS, fotos, fuentes) queda en caché tras la
-        // primera carga: la partida funciona sin conexión.
-        globPatterns: ["**/*.{js,css,html,png,svg,woff2,jpg,jpeg}"],
+        // Todo el juego (JS, CSS, fotos, vídeos, fuentes) queda en caché tras
+        // la primera carga: la partida funciona sin conexión.
+        globPatterns: ["**/*.{js,css,html,png,svg,woff2,jpg,jpeg,mp4}"],
+        // Los vídeos del rebote pesan 5-8 MB: subir el límite de precache
+        // (por defecto 2 MB) para que también queden disponibles offline.
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
       },
     }),
   ],

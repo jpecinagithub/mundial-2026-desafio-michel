@@ -11,17 +11,20 @@ import type { Participant } from "../types/game";
  *  1. Copia el archivo a public/participants/<id>.jpg
  *  2. Añade una entrada a este array con ese mismo id y nombre.
  *
- * Si falta la foto de alguien, la app muestra automáticamente un avatar
- * con sus iniciales: NUNCA se inventan fotografías ni se usan genéricas.
+ * Para añadir el vídeo personal de rebote de un participante:
+ *  1. Copia el archivo a public/videos/rebote-<id>.mp4
+ *  2. Añade `reboundVideo: "/videos/rebote-<id>.mp4"` a su entrada.
+ * Sin `reboundVideo`, el rebote salta la fase de vídeo y va directo a la
+ * pregunta (no se rompe nada).
  */
 export const PARTICIPANTS: Participant[] = [
   { id: "michel", name: "Michel", photo: "/participants/michel.png", isProtagonist: true },
-  { id: "anselmo", name: "Anselmo", photo: "/participants/anselmo.png" },
+  { id: "anselmo", name: "Anselmo", photo: "/participants/anselmo.png", reboundVideo: "/videos/rebote-setas.mp4" },
   { id: "juampi", name: "Juampi", photo: "/participants/juampi.png" },
-  { id: "alfonso", name: "Alfonso", photo: "/participants/alfonso.png" },
+  { id: "alfonso", name: "Alfonso", photo: "/participants/alfonso.png", reboundVideo: "/videos/rebote-tenis.mp4" },
   { id: "mariano", name: "Mariano", photo: "/participants/mariano.png" },
-  { id: "gabi", name: "Gabi", photo: "/participants/gabi.png" },
-  { id: "pablo", name: "Pablo", photo: "/participants/pablo.png" },
+  { id: "gabi", name: "Gabi", photo: "/participants/gabi.png", reboundVideo: "/videos/rebote-hacker.mp4" },
+  { id: "pablo", name: "Pablo", photo: "/participants/pablo.png", reboundVideo: "/videos/rebote-ciclismo.mp4" },
 ];
 
 export function getParticipant(id: string): Participant | undefined {

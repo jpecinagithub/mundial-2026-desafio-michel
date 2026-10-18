@@ -10,7 +10,16 @@ function freshState(): GameState {
   return engine.createInitialState(PARTICIPANTS.map((p) => p.id));
 }
 
-const PHASES: Phase[] = ["welcome", "michel", "reboundSelect", "rebound", "reveal", "final"];
+const PHASES: Phase[] = [
+  "welcome",
+  "michel",
+  "reboundSelect",
+  "reboundSuspense",
+  "reboundVideo",
+  "reboundQuestion",
+  "reveal",
+  "final",
+];
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null;
@@ -64,9 +73,12 @@ function loadInitial(): GameState {
       if (parsed) {
         // Sin tiempo adicional por recargar: si el cronómetro ya expiró
         // mientras la página estaba cerrada, se aplica la regla que toque.
+        // Las fases de suspense/vídeo no tienen cronómetro del motor: al
+        // recargar se repiten desde el principio (no regalan tiempo de
+        // respuesta, los 30 s arrancan con la pregunta).
         const now = Date.now();
         if (
-          (parsed.phase === "michel" || parsed.phase === "rebound") &&
+          (parsed.phase === "michel" || parsed.phase === "reboundQuestion") &&
           parsed.deadline != null &&
           now >= parsed.deadline
         ) {
@@ -111,7 +123,17 @@ export function useGame() {
   }, []);
 
   const selectRebounder = useCallback((participantId: string) => {
-    setState((s) => engine.selectRebounder(s, participantId, Date.now()));
+    setState((s) => engine.selectRebounder(s, participantId));
+  }, []);
+
+  /** Tras el suspense: el participante tiene vídeo personal asignado. */
+  const startReboundVideo = useCallback(() => {
+    setState((s) => engine.startReboundVideo(s));
+  }, []);
+
+  /** Arranca la pregunta del rebote (al terminar el vídeo, o sin vídeo). */
+  const startReboundQuestion = useCallback(() => {
+    setState((s) => engine.startReboundQuestion(s, Date.now()));
   }, []);
 
   const answerRebound = useCallback((optionIndex: number) => {
@@ -155,6 +177,8 @@ export function useGame() {
     answerMichel,
     expireMichel,
     selectRebounder,
+    startReboundVideo,
+    startReboundQuestion,
     answerRebound,
     expireRebound,
     next,

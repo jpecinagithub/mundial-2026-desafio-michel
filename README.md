@@ -5,8 +5,11 @@ Mundial de Fútbol 2026, con Michel como protagonista y sistema de rebote.
 
 - **10 rondas**: todas empiezan con Michel (60 segundos por pregunta).
 - Si Michel falla o agota su tiempo → **¡rebote!**: el organizador elige
-  manualmente quién lo intenta (30 segundos). La opción fallida por Michel
-  queda descartada.
+  manualmente quién lo intenta. Entonces hay una animación de suspense de
+  5 segundos y se reproduce el **vídeo personal** del participante elegido
+  como presentación; después llega la pregunta del rebote (30 segundos).
+  La opción fallida por Michel queda descartada. Si el participante aún
+  no tiene vídeo asignado, se salta esa parte y va directo a la pregunta.
 - **50 puntos** por acierto, sin penalizaciones. Marcador en directo,
   clasificación final con podio y tarjeta resumen.
 - Música original (Web Audio API) con volumen y silencio, efectos de sonido,
@@ -37,7 +40,7 @@ Abre la URL que indique la terminal (normalmente http://localhost:5173).
 
 ```bash
 npm run build        # compilación de producción (TypeScript + Vite) en dist/
-npm run test:engine  # 61 comprobaciones del motor del juego (máquina de estados)
+npm run test:engine  # 76 comprobaciones del motor del juego (máquina de estados)
 npm run preview      # sirve dist/ en local para probar el build
 ```
 
@@ -64,6 +67,30 @@ Las fotos las proporciona el usuario **después** de construir la app.
    `src/data/participants.ts` (el `id` debe coincidir con el nombre del archivo).
 4. Si falta una foto, la app muestra automáticamente un avatar con las
    iniciales: nunca se inventan fotografías.
+
+## Vídeos de presentación del rebote
+
+Cada participante (menos Michel, que nunca rebota) puede tener un **vídeo
+personal** que se reproduce como presentación tras la animación de suspense:
+
+1. Copia el MP4 en `public/videos/`, p. ej. `rebote-anselmo.mp4`
+   (H.264 + AAC; ~10 segundos y unos 5–7 MB van bien).
+2. Añade `reboundVideo: "/videos/rebote-anselmo.mp4"` a su entrada en
+   `src/data/participants.ts`.
+3. Sin `reboundVideo`, el flujo no se rompe: tras el suspense se va directo
+   a la pregunta del rebote.
+
+Detalles: el vídeo se reproduce a pantalla casi completa con el rótulo
+«¡[Nombre] acepta el desafío!»; al terminar avanza solo a la pregunta (hay
+botón discreto «Saltar vídeo»). Si el navegador bloquea el autoplay con
+sonido, se reproduce silenciado y aparece «🔊 Activar sonido». La música de
+fondo se pausa durante el vídeo y se reanuda después. Los vídeos quedan en
+la caché del service worker: funcionan sin conexión tras la primera carga.
+
+Flujo completo del rebote:
+`reboundSelect` (el organizador elige) → `reboundSuspense` (5 s) →
+`reboundVideo` (solo si hay vídeo) → `reboundQuestion` (30 s) → `reveal`.
+El cronómetro de 30 s arranca con la pregunta, no con la elección.
 
 ## Cómo modificar las preguntas
 
@@ -112,8 +139,8 @@ documentalmente, cada una con su fuente):
 ```text
 src/
   components/   # ParticipantPhoto, CountdownTimer, AnswerOptions, Scoreboard,
-                # MusicControls, ReboundSelection, RevealCard, FinalPodium,
-                # Confetti, TopBar, Footer
+                # MusicControls, ReboundSelection, ReboundSuspense, ReboundVideo,
+                # RevealCard, FinalPodium, Confetti, TopBar, Footer
   data/         # questions.ts (las 10 preguntas), participants.ts
   game/         # engine.ts — máquina de estados pura (testeable sin React)
   hooks/        # useGame (estado + persistencia), useCountdown (tiempo real),
@@ -124,10 +151,11 @@ src/
 public/
   participants/ # fotos de los participantes (las pone el usuario)
   questions/    # imágenes opcionales de preguntas (solo relevantes + licencia)
+  videos/       # vídeos personales de presentación del rebote (los pone el usuario)
   icons/        # iconos PWA (generados con scripts/generate-icons.mjs)
   fonts/        # Barlow / Barlow Condensed autohospedadas (sin conexión OK)
 scripts/        # generate-icons.mjs, fetch-fonts.mjs, run-engine-tests.mjs
-test/           # engine.test.mjs (61 comprobaciones)
+test/           # engine.test.mjs (76 comprobaciones)
 ```
 
 ## Música y sonido

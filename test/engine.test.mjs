@@ -84,19 +84,54 @@ const now = 1_000_000;
   s = engine.answerMichel(s, 0, false);
   const bad1 = engine.selectRebounder(s, "michel", now);
   check(bad1 === s, "11a. no se puede elegir a Michel para el rebote");
-  const bad2 = engine.selectRebounder(s, "inexistente", now);
+  const bad2 = engine.selectRebounder(s, "inexistente");
   check(bad2 === s, "11b. no se puede elegir un participante inexistente");
-  s = engine.selectRebounder(s, "juampi", now + 5000);
-  check(s.phase === "rebound", "11c. el organizador elige manualmente al participante");
+  s = engine.selectRebounder(s, "juampi");
+  check(s.phase === "reboundSuspense", "11c. el organizador elige manualmente: se entra en suspense");
   check(s.activeParticipantId === "juampi", "11d. el participante activo es el elegido");
-  check(s.deadline === now + 5000 + 30_000, "11e. el cronómetro del rebote son 30 s reales");
+  check(s.deadline === null, "11e. durante el suspense no corre el cronómetro de respuesta");
+  s = engine.startReboundQuestion(s, now + 5000);
+  check(s.phase === "reboundQuestion", "11f. tras el suspense arranca la pregunta del rebote");
+  check(s.deadline === now + 5000 + 30_000, "11g. el cronómetro del rebote son 30 s reales desde la pregunta");
+}
+
+// --- Escenario 12: flujo completo de presentación del rebote ------------------
+{
+  let s = engine.startGame(engine.createInitialState(IDS), now);
+  s = engine.answerMichel(s, 2, false); // Michel falla la opción C
+  s = engine.selectRebounder(s, "anselmo");
+  check(s.phase === "reboundSuspense", "12a. tras elegir se entra en suspense");
+  check(s.michelFailedOption === 2, "12b. la opción fallida se conserva en el suspense");
+  s = engine.startReboundVideo(s);
+  check(s.phase === "reboundVideo", "12c. con vídeo asignado se presenta al participante");
+  s = engine.startReboundQuestion(s, now + 15000);
+  check(s.phase === "reboundQuestion", "12d. tras el vídeo arranca la pregunta");
+  check(s.michelFailedOption === 2, "12e. la opción fallida sigue marcada como descartada");
+  check(s.deadline === now + 15000 + 30_000, "12f. los 30 s cuentan desde la pregunta, no desde la elección");
+  // Sin vídeo asignado: del suspense directo a la pregunta.
+  let s2 = engine.startGame(engine.createInitialState(IDS), now);
+  s2 = engine.answerMichel(s2, 0, false);
+  s2 = engine.selectRebounder(s2, "mariano");
+  s2 = engine.startReboundQuestion(s2, now + 5000);
+  check(s2.phase === "reboundQuestion", "12g. sin vídeo se salta la presentación");
+  check(s2.activeParticipantId === "mariano", "12h. el participante del rebote se mantiene");
+  // Guardas de las nuevas transiciones.
+  let g = engine.startGame(engine.createInitialState(IDS), now);
+  check(engine.startReboundVideo(g) === g, "12i. no hay vídeo sin pasar por el suspense");
+  check(engine.startReboundQuestion(g, now) === g, "12j. no hay pregunta sin suspense ni vídeo");
+  check(engine.answerRebound(g, 0, true) === g, "12k. no se responde en 'welcome'");
+  g = engine.answerMichel(g, 0, false);
+  const gSel = engine.selectRebounder(g, "gabi");
+  check(engine.answerRebound(gSel, 0, true) === gSel, "12l. no se responde durante el suspense");
+  check(engine.expireReboundTimer(gSel) === gSel, "12m. el temporizador no expira en el suspense");
 }
 
 // --- Escenario 4: el reboteado acierta ----------------------------------------
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 1, false);
-  s = engine.selectRebounder(s, "gabi", now);
+  s = engine.selectRebounder(s, "gabi");
+  s = engine.startReboundQuestion(s, now);
   s = engine.answerRebound(s, 3, true);
   check(s.phase === "reveal", "4a. tras el acierto del rebote se revela");
   check(pts(s, "gabi") === 50, "4b. el participante del rebote gana 50 puntos");
@@ -109,7 +144,8 @@ const now = 1_000_000;
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 0, false);
-  s = engine.selectRebounder(s, "pablo", now);
+  s = engine.selectRebounder(s, "pablo");
+  s = engine.startReboundQuestion(s, now);
   s = engine.answerRebound(s, 2, false);
   check(s.phase === "reveal", "5a. tras el fallo del rebote se revela");
   check(pts(s, "pablo") === 0, "5b. el participante del rebote no gana puntos");
@@ -120,9 +156,9 @@ const now = 1_000_000;
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 0, false);
-  s = engine.selectRebounder(s, "alfonso", now);
-  const before = s;
-  s = engine.expireReboundTimer(s);
+  s = engine.selectRebounder(s, "alfonso");
+  const before = engine.startReboundQuestion(s, now);
+  s = engine.expireReboundTimer(before);
   check(s.phase === "reveal", "6a. al agotarse los 30 s se revela la respuesta");
   check(pts(s, "alfonso") === 0, "6b. sin puntos por tiempo agotado");
   check(s.selectedOption === null, "6c. no hay opción seleccionada");
@@ -136,7 +172,8 @@ const now = 1_000_000;
 {
   let s = engine.startGame(engine.createInitialState(IDS), now);
   s = engine.answerMichel(s, 0, false);
-  s = engine.selectRebounder(s, "juampi", now);
+  s = engine.selectRebounder(s, "juampi");
+  s = engine.startReboundQuestion(s, now);
   s = engine.answerRebound(s, 1, true); // Juampi arrebata los puntos…
   s = engine.nextQuestion(s, now + 1000);
   check(s.phase === "michel", "7a. la siguiente ronda vuelve a la fase 'michel'");
@@ -153,7 +190,8 @@ const now = 1_000_000;
     s = engine.answerMichel(s, 0, michelOk);
     if (!michelOk) {
       // Al fallar hay que completar el rebote antes de poder avanzar.
-      s = engine.selectRebounder(s, "juampi", now + q * 1000);
+      s = engine.selectRebounder(s, "juampi");
+      s = engine.startReboundQuestion(s, now + q * 1000);
       s = engine.answerRebound(s, 1, false);
     }
     s = engine.nextQuestion(s, now + q * 1000);
@@ -178,7 +216,8 @@ const now = 1_000_000;
   for (const [who, opt, ok, reb] of steps) {
     if (who === "michel") s = engine.answerMichel(s, opt, ok);
     if (reb) {
-      s = engine.selectRebounder(s, reb, t);
+      s = engine.selectRebounder(s, reb);
+      s = engine.startReboundQuestion(s, t);
       s = engine.answerRebound(s, 1, true);
     }
     s = engine.nextQuestion(s, t);
@@ -197,16 +236,16 @@ const now = 1_000_000;
   check(engine.totalPointsAwarded(s.scores) === 200, "10f. total repartido = 200 puntos");
 }
 
-// --- Escenario 11 (guardas): transiciones inválidas ----------------------------
+// --- Escenario 13 (guardas): transiciones inválidas ----------------------------
 {
   const s = engine.createInitialState(IDS);
-  check(engine.answerMichel(s, 0, true) === s, "11c. no se puede responder en 'welcome'");
-  check(engine.expireMichelTimer(s) === s, "11d. no expira ningún cronómetro en 'welcome'");
-  check(engine.selectRebounder(s, "juampi", now) === s, "11e. no hay selección de rebote en 'welcome'");
-  check(engine.nextQuestion(s, now) === s, "11f. no se avanza en 'welcome'");
+  check(engine.answerMichel(s, 0, true) === s, "13a. no se puede responder en 'welcome'");
+  check(engine.expireMichelTimer(s) === s, "13b. no expira ningún cronómetro en 'welcome'");
+  check(engine.selectRebounder(s, "juampi") === s, "13c. no hay selección de rebote en 'welcome'");
+  check(engine.nextQuestion(s, now) === s, "13d. no se avanza en 'welcome'");
   let s2 = engine.startGame(engine.createInitialState(IDS), now);
-  check(engine.answerRebound(s2, 0, true) === s2, "11g. no se puede responder un rebote en el turno de Michel");
-  check(engine.expireReboundTimer(s2) === s2, "11h. no expira el rebote en el turno de Michel");
+  check(engine.answerRebound(s2, 0, true) === s2, "13e. no se puede responder un rebote en el turno de Michel");
+  check(engine.expireReboundTimer(s2) === s2, "13f. no expira el rebote en el turno de Michel");
 }
 
 console.log(`\n${passed} comprobaciones superadas, ${failed} fallidas.`);

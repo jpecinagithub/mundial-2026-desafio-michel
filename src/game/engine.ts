@@ -123,16 +123,54 @@ export function expireMichelTimer(state: GameState): GameState {
   };
 }
 
-/** El organizador elige MANUALMENTE al participante del rebote. */
-export function selectRebounder(
-  state: GameState,
-  participantId: string,
-  now: number,
-): GameState {
+/**
+ * El organizador elige MANUALMENTE al participante del rebote.
+ * Pasa a la fase de suspense (animación de 5 s); el cronómetro de 30 s
+ * no arranca hasta que aparece la pregunta del rebote.
+ */
+export function selectRebounder(state: GameState, participantId: string): GameState {
   if (state.phase !== "reboundSelect") return state;
   if (participantId === MICHEL_ID) return state;
   if (!state.scores[participantId]) return state;
-  return freshRound({ ...state, phase: "rebound" }, participantId, REBOUND_SECONDS, now);
+  return {
+    ...state,
+    phase: "reboundSuspense",
+    activeParticipantId: participantId,
+    selectedOption: null,
+    wasCorrect: null,
+    reboundStolen: false,
+    deadline: null,
+  };
+}
+
+/**
+ * Tras el suspense: si el participante tiene vídeo personal asignado,
+ * se reproduce como presentación antes de la pregunta.
+ */
+export function startReboundVideo(state: GameState): GameState {
+  if (state.phase !== "reboundSuspense") return state;
+  return { ...state, phase: "reboundVideo" };
+}
+
+/**
+ * Arranca la pregunta del rebote (cronómetro de 30 s reales).
+ * Se llama al terminar el vídeo, o directamente tras el suspense si el
+ * participante aún no tiene vídeo asignado.
+ */
+export function startReboundQuestion(state: GameState, now: number): GameState {
+  if (state.phase !== "reboundSuspense" && state.phase !== "reboundVideo") {
+    return state;
+  }
+  // Se conserva la opción que falló Michel para mostrarla como descartada
+  // durante la pregunta del rebote (freshRound la pondría a null).
+  const failedOption = state.michelFailedOption;
+  const next = freshRound(
+    { ...state, phase: "reboundQuestion" },
+    state.activeParticipantId,
+    REBOUND_SECONDS,
+    now,
+  );
+  return { ...next, michelFailedOption: failedOption };
 }
 
 export function answerRebound(
@@ -140,7 +178,7 @@ export function answerRebound(
   optionIndex: number,
   isCorrect: boolean,
 ): GameState {
-  if (state.phase !== "rebound" || state.selectedOption !== null) return state;
+  if (state.phase !== "reboundQuestion" || state.selectedOption !== null) return state;
   if (isCorrect) {
     return {
       ...addPoints(state, state.activeParticipantId),
@@ -164,7 +202,7 @@ export function answerRebound(
 
 /** Se agotaron los 30 s del rebote. */
 export function expireReboundTimer(state: GameState): GameState {
-  if (state.phase !== "rebound" || state.selectedOption !== null) return state;
+  if (state.phase !== "reboundQuestion" || state.selectedOption !== null) return state;
   return {
     ...state,
     phase: "reveal",
