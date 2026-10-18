@@ -1,0 +1,12 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+
+# Test (bundle temporal del motor)
+test/.engine.bundle.cjs
+
+# Logs y temporales
+*.log
+.DS_Store

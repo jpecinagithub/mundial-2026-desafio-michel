@@ -1,0 +1,62 @@
+[
+  {
+    "family": "Barlow Condensed",
+    "weight": 600,
+    "subset": "latin",
+    "file": "barlow-condensed-600-latin.woff2"
+  },
+  {
+    "family": "Barlow Condensed",
+    "weight": 600,
+    "subset": "latin-ext",
+    "file": "barlow-condensed-600-latin-ext.woff2"
+  },
+  {
+    "family": "Barlow Condensed",
+    "weight": 700,
+    "subset": "latin",
+    "file": "barlow-condensed-700-latin.woff2"
+  },
+  {
+    "family": "Barlow Condensed",
+    "weight": 700,
+    "subset": "latin-ext",
+    "file": "barlow-condensed-700-latin-ext.woff2"
+  },
+  {
+    "family": "Barlow",
+    "weight": 400,
+    "subset": "latin",
+    "file": "barlow-400-latin.woff2"
+  },
+  {
+    "family": "Barlow",
+    "weight": 400,
+    "subset": "latin-ext",
+    "file": "barlow-400-latin-ext.woff2"
+  },
+  {
+    "family": "Barlow",
+    "weight": 500,
+    "subset": "latin",
+    "file": "barlow-500-latin.woff2"
+  },
+  {
+    "family": "Barlow",
+    "weight": 500,
+    "subset": "latin-ext",
+    "file": "barlow-500-latin-ext.woff2"
+  },
+  {
+    "family": "Barlow",
+    "weight": 700,
+    "subset": "latin",
+    "file": "barlow-700-latin.woff2"
+  },
+  {
+    "family": "Barlow",
+    "weight": 700,
+    "subset": "latin-ext",
+    "file": "barlow-700-latin-ext.woff2"
+  }
+]
