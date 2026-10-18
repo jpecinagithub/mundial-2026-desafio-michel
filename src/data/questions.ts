@@ -113,20 +113,24 @@ export const QUESTIONS: Question[] = [
   {
     id: "q6",
     question:
-      "Ante Bélgica, con 1-1 en el marcador, De la Fuente hizo sus cambios más tempranos de todo el Mundial: ¿en qué minuto y quiénes entraron?",
+      "Ante Bélgica, con 1-1 en el marcador, De la Fuente hizo un doble cambio en el minuto 55. ¿Quiénes entraron al campo?",
     options: [
-      "60': Merino y Fabián",
-      "70': Nico Williams y Llorente",
-      "76': Ferran Torres y Merino",
-      "55': Pedri y Ferran Torres",
+      "Pedri y Ferran Torres",
+      "Mikel Merino y Pedri",
+      "Ferran Torres y Nico Williams",
+      "Dani Olmo y Álex Baena",
     ],
-    correctIndex: 3,
+    correctIndex: 0,
     explanation:
-      "En el 55', sin el fútbol de octavos y con empate en el marcador, movió el banquillo antes que en ningún otro partido del torneo: Pedri y Ferran Torres.",
+      "En el 55' entraron Pedri (por Fabián) y Ferran Torres (por Baena): los cambios más tempranos de España en todo el torneo. Merino no saltó hasta el 86' (por Olmo) y Nico Williams hasta el 79' (por Oyarzabal); Olmo y Baena fueron los sustituidos, no los que entraron.",
     sources: [
       {
         label: "El Informante Perú",
         url: "http://elinformanteperu.com/index.php/2026/07/12/espana-se-clasifico-a-semifinales-del-mundial-por-segunda-vez-en-su-historia/",
+      },
+      {
+        label: "Everardo Herrera (ficha técnica)",
+        url: "https://everardoherrera.com/index.php/futbol-internacional/69-internacional-2/134892-agonico-triunfo-de-espana-sobre-belgica-para-meterse-en-semifinales-del-mundial",
       },
     ],
   },
