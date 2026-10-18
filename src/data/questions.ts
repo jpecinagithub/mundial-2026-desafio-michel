@@ -63,17 +63,21 @@ export const QUESTIONS: Question[] = [
   {
     id: "q3",
     question:
-      "Tras el error de Muslera en el 0-1 de Baena (42'), ¿qué cambio hizo Bielsa al descanso del Uruguay-España?",
+      "Muslera falló en el 0-1 de Baena (42') y no volvió tras el descanso ante España. ¿Qué contó Bielsa después del partido sobre aquel cambio de portero?",
     options: [
-      "Nicolás de la Cruz por Manuel Ugarte",
-      "Brian Rodríguez por Antonio Sanabria",
-      "Sergio Rochet por Fernando Muslera",
-      "Ninguno: mantuvo a Muslera bajo palos",
+      "Que lo decidió él al ver el vestuario roto",
+      "Que fue Rochet quien pidió entrar en el descanso",
+      "Que fue el propio Muslera quien pidió salir",
+      "Que lo decidió el preparador de porteros",
     ],
     correctIndex: 2,
     explanation:
-      "Muslera falló en el gol de Baena y no volvió tras el descanso: Bielsa puso a Sergio Rochet. Lo recoge la ficha oficial de la RFEF.",
+      "Bielsa contó en DAZN, nada más terminar el partido, que la decisión la tomó el propio Muslera: «Él pidió salir». Rochet defendió la portería charrúa en la segunda mitad.",
     sources: [
+      {
+        label: "DAZN",
+        url: "https://www.dazn.com/es-ES/news/f%C3%BAtbol/que-pasado-muslera-por-que-cambia-marcelo-bielsa-descanso-uruguay-vs-espana-entra-sergio-rochet/1lohnwsasmdfg1l1ht75gnkri1",
+      },
       {
         label: "RFEF",
         url: "https://rfef.es/es/noticias/espana-doma-el-volcan-rumbo-dieciseisavos-0-1",
